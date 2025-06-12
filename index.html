@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Fit Timer Setup</title>
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&display=swap" rel="stylesheet"/>
+  <style>
+    /* RESET & BASE */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: linear-gradient(135deg, #e0f7fa, #f2f5f8);
+      display: flex; align-items: center; justify-content: center;
+      min-height: 100vh; padding: 1rem;
+    }
+    /* CARD */
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.08);
+      width: 100%;
+      max-width: 600px;
+      overflow: hidden;
+    }
+    .section {
+      padding: 28px 32px;
+      border-bottom: 1px solid #f0f0f0;
+      background: #fbfdff;
+    }
+    .section:last-child {
+      border-bottom: none;
+    }
+    /* HEADER / LOGO */
+    .card-header {
+      text-align: center;
+      padding: 32px 0;
+      background: #fff;
+    }
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #004f8b;
+    }
+    .logo-icon {
+      font-size: 2rem;
+      transform: translateY(-2px);
+    }
+    /* SECTION HEADINGS */
+    .section h2 {
+      font-size: 1.25rem;
+      margin-bottom: 16px;
+      color: #333;
+    }
+    /* GRID LAYOUT */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px,1fr));
+      gap: 16px;
+    }
+    .field {
+      display: flex; flex-direction: column;
+    }
+    .field label {
+      font-size: 0.875rem;
+      margin-bottom: 6px;
+      color: #555;
+    }
+    .field input {
+      height: 48px;
+      padding: 0 14px;
+      font-size: 1rem;
+      border: 1px solid #d1e8ff;
+      border-radius: 10px;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .field input:focus {
+      border-color: #0072ff;
+      box-shadow: 0 0 0 4px rgba(0,114,255,0.15);
+      outline: none;
+    }
+    textarea {
+      width: 100%;
+      padding: 14px;
+      font-size: 1rem;
+      border: 1px solid #d1e8ff;
+      border-radius: 10px;
+      height: 100px;
+      resize: vertical;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    textarea:focus {
+      border-color: #0072ff;
+      box-shadow: 0 0 0 4px rgba(0,114,255,0.15);
+      outline: none;
+    }
+    /* INTERVAL ROW */
+    #interval-list .interval-row {
+      display: grid;
+      grid-template-columns: 1fr 90px 32px;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .interval-row input {
+      height: 44px;
+      padding: 0 10px;
+      font-size: 0.95rem;
+      border: 1px solid #d1e8ff;
+      border-radius: 8px;
+    }
+    .interval-row input:focus {
+      border-color: #0072ff;
+      box-shadow: 0 0 0 3px rgba(0,114,255,0.15);
+      outline: none;
+    }
+    .delete-btn {
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      color: #888;
+      cursor: pointer;
+      transition: color .2s;
+    }
+    .delete-btn:hover {
+      color: #e74c3c;
+    }
+    /* BUTTONS */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 12px 28px;
+      font-size: 1rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color .2s, transform .1s, box-shadow .2s;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    }
+    .btn-primary {
+      background: #0072ff;
+      color: #fff;
+    }
+    .btn-primary:hover { 
+      background: #005fcc; 
+      box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+    }
+    .btn-primary:active { transform: scale(0.97); }
+    .btn-secondary {
+      background: #00c96b;
+      color: #fff;
+    }
+    .btn-secondary:hover {
+      background: #00a856;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+    }
+    .btn-secondary:active { transform: scale(0.97); }
+    /* FORMAT HELPER */
+    .format-helper pre {
+      background: #eef8ff;
+      padding: 14px;
+      border-radius: 8px;
+      border: 1px solid #cce7ff;
+      font-family: monospace;
+      font-size: 0.875rem;
+      overflow-x: auto;
+      margin-bottom: 8px;
+    }
+    /* RESPONSIVE */
+    @media (max-width: 500px) {
+      .section { padding: 20px; }
+      .grid { gap: 12px; }
+      .btn { width: 100%; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <!-- Header / Branding -->
+    <header class="card-header">
+      <div class="logo">
+        <span class="logo-icon">🏋️</span>
+        AI Fit Timer
+      </div>
+    </header>
+
+    <!-- Workout Settings -->
+    <section class="section">
+      <h2>Workout Settings</h2>
+      <div class="grid">
+        <div class="field">
+          <label for="rounds">Rounds</label>
+          <input id="rounds" type="number" min="1" value="1"/>
+        </div>
+        <div class="field">
+          <label for="rest-interval">Interval Rest (sec)</label>
+          <input id="rest-interval" type="number" min="0" value="0"/>
+        </div>
+        <div class="field">
+          <label for="rest-round">Round Rest (sec)</label>
+          <input id="rest-round" type="number" min="0" value="0"/>
+        </div>
+      </div>
+    </section>
+
+    <!-- Intervals -->
+    <section class="section">
+      <h2>Intervals</h2>
+      <div id="interval-list"></div>
+      <button id="add-interval" class="btn btn-secondary">➕ Add Interval</button>
+    </section>
+
+    <!-- Load Routine -->
+    <section class="section">
+      <h2>Load Routine</h2>
+      <p style="font-size:0.9rem; color:#555; margin-bottom:8px;">
+        Paste lines as <code>Name - sec</code>:
+      </p>
+      <textarea id="paste-area" placeholder="Pushups - 40\nPlank - 30"></textarea>
+      <button id="load-routine" class="btn btn-secondary" style="margin-top:12px;">
+        📥 Load Routine
+      </button>
+    </section>
+
+    <!-- Format Helper & Copy -->
+    <section class="section">
+      <h2>Workout format for AI prompt</h2>
+      <pre id="format-example">
+Pushups - 40
+Plank - 30
+Jumping Jacks - 40
+      </pre>
+      <button id="copy-format" class="btn btn-secondary">📋 Copy</button>
+    </section>
+
+    <!-- Start Workout -->
+    <section class="section" style="text-align:center;">
+      <button id="start-workout" class="btn btn-primary">▶️ Start Workout</button>
+    </section>
+  </div>
+
+  <script>
+    // Elements
+    const intervalList = document.getElementById('interval-list');
+    const addBtn = document.getElementById('add-interval');
+    const loadBtn = document.getElementById('load-routine');
+    const pasteArea = document.getElementById('paste-area');
+    const copyBtn = document.getElementById('copy-format');
+    const formatExample = document.getElementById('format-example');
+    const startBtn = document.getElementById('start-workout');
+
+    // Create a new interval row
+    function createInterval(name = '', duration = '') {
+      const row = document.createElement('div');
+      row.className = 'interval-row';
+      row.innerHTML = `
+        <input class="name" type="text" placeholder="Exercise Name" value="${name}"/>
+        <input class="duration" type="number" placeholder="Sec" min="0" value="${duration}"/>
+        <button class="delete-btn" title="Delete">&times;</button>
+      `;
+      row.querySelector('.delete-btn').addEventListener('click', () => row.remove());
+      intervalList.appendChild(row);
+    }
+
+    // Initialize with one empty row
+    createInterval();
+
+    // Add Interval button
+    addBtn.addEventListener('click', () => createInterval());
+
+    // Load Routine button
+    loadBtn.addEventListener('click', () => {
+      const lines = pasteArea.value.trim().split('\n');
+      intervalList.innerHTML = '';
+      lines.forEach(line => {
+        const parts = line.split('-');
+        if (parts.length === 2) {
+          const nm = parts[0].trim();
+          const dur = parseInt(parts[1].trim());
+          if (nm && !isNaN(dur)) createInterval(nm, dur);
+        }
+      });
+    });
+
+    // Copy Format button
+    copyBtn.addEventListener('click', () => {
+      const txt = formatExample.innerText.trim();
+      navigator.clipboard.writeText(txt)
+        .then(() => {
+          copyBtn.textContent = '✅ Copied';
+          setTimeout(() => copyBtn.innerHTML = '📋 Copy', 1500);
+        })
+        .catch(() => alert('Copy failed'));
+    });
+
+    // Start Workout (placeholder)
+    startBtn.addEventListener('click', () => {
+      // Validate inputs...
+      alert('Starting workout…');
+      // Switch to Timer View...
+    });
+  </script>
+</body>
+</html>
