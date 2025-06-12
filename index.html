@@ -230,16 +230,19 @@
       </button>
     </section>
 
-    <!-- Format Helper & Copy -->
-    <section class="section">
-      <h2>Workout format for AI prompt</h2>
-      <pre id="format-example">
-Pushups - 40
-Plank - 30
-Jumping Jacks - 40
-      </pre>
-      <button id="copy-format" class="btn btn-secondary">📋 Copy</button>
-    </section>
+  <!-- Format Helper & Copy -->
+<section class="section format-helper">
+    <h2 style="font-size: 1rem; margin-bottom: 4px;">Output format for interval timer</h2>
+    <p style="font-size: 0.9rem; color: #555; margin-bottom: 8px;">
+      Each line should include the exercise name, followed by the duration in seconds.
+    </p>
+    <pre id="format-example">
+  Pushups - 40
+  Plank - 30
+  Jumping Jacks - 40
+    </pre>
+    <button id="copy-format" class="btn btn-secondary">📋 Copy Format</button>
+  </section>
 
     <!-- Start Workout -->
     <section class="section" style="text-align:center;">
@@ -310,3 +313,188 @@ Jumping Jacks - 40
   </script>
 </body>
 </html>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // grab controls
+      const startBtn      = document.getElementById('start-workout');
+      const roundsInput   = document.getElementById('rounds');
+      const restIntInput  = document.getElementById('rest-interval');
+      const restRndInput  = document.getElementById('rest-round');
+      const intervalList  = document.getElementById('interval-list');
+    
+      let fullQueue = [];      // array of { name, duration }
+      let currentIndex = 0;    // pointer into fullQueue
+      let intervalEnd = 0;     // timestamp when current interval ends
+      let paused = false;      // pause flag
+      let pauseRemaining = 0;  // seconds left when paused
+      let rafId = null;        // requestAnimationFrame ID
+    
+      // AUDIO UTILS: simple beeps via Web Audio API
+      function playBeep(freq, lengthSec) {
+        const ctx = new (window.AudioContext||window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.frequency.value = freq;
+        osc.start();
+        osc.stop(ctx.currentTime + lengthSec);
+      }
+      function playDing()  { playBeep(1000, 0.1); }
+      function playBuzzer(){ playBeep(200,  0.5); }
+    
+      // BUILD THE QUEUE based on user inputs + intervals
+      function buildQueue() {
+        const rounds     = parseInt(roundsInput.value) || 1;
+        const restInt    = parseInt(restIntInput.value) || 0;
+        const restRnd    = parseInt(restRndInput.value) || 0;
+        // gather user intervals
+        const base = [];
+        intervalList.querySelectorAll('.interval-row').forEach(row => {
+          const name = row.querySelector('.name').value.trim();
+          const dur  = parseInt(row.querySelector('.duration').value);
+          if (name && dur > 0) {
+            base.push({ name, duration: dur });
+            // insert rest between intervals
+            if (restInt > 0) base.push({ name: 'Rest', duration: restInt });
+          }
+        });
+        // remove the last Rest after final exercise
+        if (base.length && base[base.length-1].name === 'Rest') {
+          base.pop();
+        }
+        // repeat per round and insert breaks
+        fullQueue = [];
+        for (let r=1; r<=rounds; r++) {
+          base.forEach(item => fullQueue.push(item));
+          if (r < rounds && restRnd > 0) {
+            fullQueue.push({ name: 'Break', duration: restRnd });
+          }
+        }
+      }
+    
+      // RENDER FULLSCREEN RUNNER VIEW
+      function showRunner() {
+        // overlay container
+        const overlay = document.createElement('div');
+        overlay.id = 'runner';
+        Object.assign(overlay.style, {
+          position: 'fixed', top:0, left:0, right:0, bottom:0,
+          background:'#fff', display:'flex', flexDirection:'column',
+          alignItems:'center', justifyContent:'center', zIndex:1000,
+          padding:'20px', textAlign:'center'
+        });
+        // markup
+        overlay.innerHTML = `
+          <div style="font-size:2rem;font-weight:600;margin-bottom:8px" id="runner-round"></div>
+          <div style="font-size:1.5rem;color:#666;margin-bottom:16px" id="runner-next"></div>
+          <div style="font-size:3.5rem;font-weight:700" id="runner-name"></div>
+          <div style="font-size:2.5rem;margin:16px 0" id="runner-timer"></div>
+          <div id="runner-progress" style="display:flex;gap:6px"></div>
+          <div style="margin-top:24px;display:flex;gap:12px">
+            <button id="pause-btn" style="padding:12px 20px">Pause</button>
+            <button id="resume-btn" style="padding:12px 20px;display:none">Resume</button>
+            <button id="reset-btn"  style="padding:12px 20px">Reset</button>
+          </div>
+        `;
+        document.body.appendChild(overlay);
+    
+        // build progress dots
+        const prog = document.getElementById('runner-progress');
+        fullQueue.forEach((_,i)=>{
+          const dot = document.createElement('div');
+          Object.assign(dot.style,{width:'10px',height:'10px',borderRadius:'50%',background:'#ddd'});
+          prog.appendChild(dot);
+        });
+    
+        // hook buttons
+        document.getElementById('pause-btn').onclick = pauseTimer;
+        document.getElementById('resume-btn').onclick = resumeTimer;
+        document.getElementById('reset-btn').onclick  = () => location.reload();
+      }
+    
+      // START OR CONTINUE INTERVAL
+      function startInterval() {
+        if (currentIndex >= fullQueue.length) {
+          // workout complete
+          alert('🎉 Workout complete!');
+          return;
+        }
+        const item = fullQueue[currentIndex];
+        const now = Date.now();
+        intervalEnd = now + item.duration*1000;
+        // update round / labels
+        const roundNum = fullQueue
+          .slice(0, currentIndex)
+          .filter(i=> i.name !== 'Rest' && i.name !== 'Break').length
+          / baseExercisesCount + 1;
+        document.getElementById('runner-round').textContent = 
+          `Round ${roundNum}/${parseInt(roundsInput.value)}`;
+        document.getElementById('runner-name').textContent = item.name;
+        // next up
+        const next = fullQueue[currentIndex+1];
+        document.getElementById('runner-next').textContent =
+          next ? `Next: ${next.name}` : '';
+        // highlight progress dot
+        document
+          .getElementById('runner-progress')
+          .children[currentIndex]
+          .style.background = '#0072ff';
+        // begin tick
+        tick(item.duration);
+      }
+    
+      // RENDER COUNTDOWN & handle sounds / auto-advance
+      let lastDisplay = null;
+      function tick(origDuration) {
+        if (paused) return;
+        const secLeft = Math.ceil((intervalEnd - Date.now())/1000);
+        const display = secLeft > 0 ? secLeft : 0;
+        document.getElementById('runner-timer').textContent = display;
+        // play dings at 3,2,1
+        if (display <=3 && display >0 && display !== lastDisplay) playDing();
+        // buzzer at 0
+        if (display === 0 && lastDisplay !== 0) playBuzzer();
+        lastDisplay = display;
+    
+        if (Date.now() < intervalEnd) {
+          rafId = requestAnimationFrame(()=> tick(origDuration));
+        } else {
+          currentIndex++;
+          lastDisplay = null;
+          startInterval();
+        }
+      }
+    
+      // PAUSE & RESUME
+      function pauseTimer() {
+        paused = true;
+        cancelAnimationFrame(rafId);
+        pauseRemaining = Math.ceil((intervalEnd - Date.now())/1000);
+        document.getElementById('pause-btn').style.display = 'none';
+        document.getElementById('resume-btn').style.display = 'inline-block';
+      }
+      function resumeTimer() {
+        paused = false;
+        intervalEnd = Date.now() + pauseRemaining*1000;
+        document.getElementById('pause-btn').style.display = 'inline-block';
+        document.getElementById('resume-btn').style.display = 'none';
+        tick(pauseRemaining);
+      }
+    
+      // MAIN: wire up Start Workout
+      startBtn.addEventListener('click', () => {
+        buildQueue();
+        if (!fullQueue.length) {
+          return alert('Add at least one interval');
+        }
+        // remember how many real exercises per round
+        window.baseExercisesCount = document
+          .querySelectorAll('#interval-list .interval-row .name').length;
+        currentIndex = 0;
+        showRunner();
+        startInterval();
+      });
+    });
+    </script>
+    
