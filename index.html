@@ -218,13 +218,19 @@
     </header>
 
     <div class="banner">💪 Let’s Crush This Workout!</div>
+    <p style="text-align:center; font-size:0.95rem; color:#444; padding: 0 24px 16px;">
+      You can enter your workout manually below or generate it with AI. Use the copy prompt to auto-load routines from tools like ChatGPT.
+    </p>
     <!-- TOP CONTROLS -->
     <section class="section top-controls">
       <button id="start-workout-top" class="btn btn-primary btn-start">🔥 Start Workout</button>
       <button id="copy-format-top" class="btn btn-secondary btn-start">📋 Copy Output Prompt</button>
     </section>
     <section class="section format-helper">
-      <h2>Output format for interval timer</h2>
+      <h2>Output Prompt Format</h2>
+      <p style="font-size:0.9rem; color:#555; margin-bottom:8px;">
+        Append this to your workout request in a GenAI app. Use the output to auto-load the routine into this timer.
+      </p>
       <p>Each line should include the exercise name, followed by the duration in seconds.</p>
       <pre id="format-example">
 Pushups - 40
@@ -240,14 +246,17 @@ Jumping Jacks - 40
         <div class="field">
           <label for="rounds">Rounds</label>
           <input id="rounds" type="number" min="1" value="1"/>
+          <span style="font-size:0.8rem; color:#777;">Number of times to repeat the full interval list.</span>
         </div>
         <div class="field">
           <label for="rest-interval">Interval Rest (sec)</label>
           <input id="rest-interval" type="number" min="0" value="0"/>
+          <span style="font-size:0.8rem; color:#777;">Pause between each exercise.</span>
         </div>
         <div class="field">
           <label for="rest-round">Round Rest (sec)</label>
           <input id="rest-round" type="number" min="0" value="0"/>
+          <span style="font-size:0.8rem; color:#777;">Break between rounds.</span>
         </div>
       </div>
     </section>
