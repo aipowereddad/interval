@@ -162,6 +162,22 @@
       .grid { gap: 12px; }
       .btn { width: 100%; }
     }
+
+    /* HEADER ROW FOR INTERVALS */
+    .interval-row.header {
+      display: grid;
+      grid-template-columns: 1fr 90px 32px;
+      gap: 8px;
+      align-items: center;
+      padding-bottom: 8px;
+      margin-bottom: 8px;
+      border-bottom: 1px solid #ddd;
+    }
+    .interval-row.header .header-name,
+    .interval-row.header .header-duration {
+      font-weight: 600;
+      color: #333;
+    }
   </style>
 </head>
 <body>
@@ -195,6 +211,12 @@
     <!-- INTERVALS -->
     <section class="section">
       <h2>Intervals</h2>
+      <!-- add header labels -->
+      <div class="interval-row header">
+        <div class="header-name">Exercise Name</div>
+        <div class="header-duration">Seconds</div>
+        <div></div>
+      </div>
       <div id="interval-list"></div>
       <button id="add-interval" class="btn btn-secondary">➕ Add Interval</button>
     </section>
@@ -211,24 +233,16 @@
       </button>
     </section>
 
-    <!-- FORMAT HELPER -->
-    <section class="section format-helper">
-      <h2 style="font-size:1rem; margin-bottom:4px;">Output format for interval timer</h2>
-      <p style="font-size:0.9rem; color:#555; margin-bottom:8px;">
-        Each line should include the exercise name, followed by the duration in seconds.
-      </p>
-      <pre id="format-example">
-Pushups - 40
-Plank - 30
-Jumping Jacks - 40
-      </pre>
-      <button id="copy-format" class="btn btn-secondary">📋 Copy Format</button>
+    <!-- QUICK COPY BUTTON -->
+    <section class="section" style="text-align:center;">
+      <button id="copy-format" class="btn btn-secondary">📋 Copy Output Prompt</button>
     </section>
 
     <!-- START -->
     <section class="section" style="text-align:center;">
-      <button id="start-workout" class="btn btn-primary">▶️ Start Workout</button>
+      <button id="start-workout" class="btn btn-primary">🔥 Start Workout</button>
     </section>
+
   </div>
 
   <script>
