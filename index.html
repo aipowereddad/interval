@@ -178,6 +178,14 @@
       font-weight: 600;
       color: #333;
     }
+
+    /* Hidden helper section */
+    .format-helper { display: none; }
+    /* Larger, bolder start button */
+    .btn-start {
+      font-size: 1.1rem;
+      padding: 16px 32px;
+    }
   </style>
 </head>
 <body>
@@ -188,6 +196,21 @@
         AI Fit Timer
       </div>
     </header>
+
+    <!-- TOP CONTROLS -->
+    <section class="section" style="text-align:center;">
+      <button id="start-workout-top" class="btn btn-primary btn-start">▶️ Start Workout</button>
+      <button id="copy-format-top" class="btn btn-secondary">📋 Copy Output Prompt</button>
+    </section>
+    <section class="section format-helper">
+      <h2>Output format for interval timer</h2>
+      <p>Each line should include the exercise name, followed by the duration in seconds.</p>
+      <pre id="format-example">
+Pushups - 40
+Plank - 30
+Jumping Jacks - 40
+      </pre>
+    </section>
 
     <!-- SETTINGS -->
     <section class="section">
@@ -233,15 +256,6 @@
       </button>
     </section>
 
-    <!-- QUICK COPY BUTTON -->
-    <section class="section" style="text-align:center;">
-      <button id="copy-format" class="btn btn-secondary">📋 Copy Output Prompt</button>
-    </section>
-
-    <!-- START -->
-    <section class="section" style="text-align:center;">
-      <button id="start-workout" class="btn btn-primary">🔥 Start Workout</button>
-    </section>
 
   </div>
 
@@ -255,9 +269,13 @@
     const addBtn        = document.getElementById('add-interval');
     const loadBtn       = document.getElementById('load-routine');
     const pasteArea     = document.getElementById('paste-area');
-    const copyBtn       = document.getElementById('copy-format');
+    // const copyBtn       = document.getElementById('copy-format');
     const formatExample = document.getElementById('format-example');
+    // const startBtn      = document.getElementById('start-workout');
     const startBtn      = document.getElementById('start-workout');
+    const startBtnTop   = document.getElementById('start-workout-top');
+    const copyBtnTop    = document.getElementById('copy-format-top');
+    const helperSection = document.querySelector('.format-helper');
 
     // STATE
     let fullQueue = [], currentIndex = 0, intervalEnd = 0;
@@ -299,17 +317,6 @@
         const [n,d] = l.split('-').map(s=>s.trim());
         if (n && !isNaN(d)) createInterval(n,d);
       });
-    };
-
-    // COPY FORMAT HANDLER
-    copyBtn.onclick = () => {
-      const heading  = 'Output format for interval timer:';
-      const instr    = 'Each line should include the exercise name, followed by the duration in seconds.';
-      const examples = formatExample.innerText.trim();
-      const txt = `${heading}\n${instr}\n\n${examples}`;
-      navigator.clipboard.writeText(txt)
-        .then(()=> alert('Copied!'))
-        .catch(()=> alert('Copy failed'));
     };
 
     // BUILD FULL QUEUE
@@ -469,6 +476,26 @@
       currentIndex = 0;
       showRunner();
       startInterval();
+    };
+
+    // TOP COPY FORMAT BEHAVIOR
+    copyBtnTop.onclick = () => {
+      helperSection.style.display = 'block';
+      // copy same format text
+      const heading  = 'Output format for interval timer:';
+      const instr    = 'Each line should include the exercise name, followed by the duration in seconds.';
+      const examples = document.getElementById('format-example').innerText.trim();
+      navigator.clipboard.writeText(`${heading}\n${instr}\n\n${examples}`)
+        .then(() => {
+          alert('Format copied!');
+          setTimeout(() => { helperSection.style.display = 'none'; }, 2000);
+        })
+        .catch(() => alert('Copy failed'));
+    };
+
+    // TOP START WORKOUT
+    startBtnTop.onclick = () => {
+      startBtn.onclick();
     };
   });
   </script>
