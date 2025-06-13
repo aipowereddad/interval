@@ -161,6 +161,31 @@
       .section { padding: 20px; }
       .grid { gap: 12px; }
       .btn { width: 100%; }
+      .top-controls { flex-direction: column; }
+    }
+
+    .top-controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .btn-start {
+      font-size: 1.1rem;
+      padding: 16px 32px;
+    }
+
+    .banner {
+      text-align: center;
+      background: #e8f5e9;
+      color: #388e3c;
+      padding: 12px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      border-radius: 8px;
     }
 
     /* HEADER ROW FOR INTERVALS */
@@ -181,11 +206,6 @@
 
     /* Hidden helper section */
     .format-helper { display: none; }
-    /* Larger, bolder start button */
-    .btn-start {
-      font-size: 1.1rem;
-      padding: 16px 32px;
-    }
   </style>
 </head>
 <body>
@@ -197,10 +217,11 @@
       </div>
     </header>
 
+    <div class="banner">💪 Let’s Crush This Workout!</div>
     <!-- TOP CONTROLS -->
-    <section class="section" style="text-align:center;">
-      <button id="start-workout-top" class="btn btn-primary btn-start">▶️ Start Workout</button>
-      <button id="copy-format-top" class="btn btn-secondary">📋 Copy Output Prompt</button>
+    <section class="section top-controls">
+      <button id="start-workout-top" class="btn btn-primary btn-start">🔥 Start Workout</button>
+      <button id="copy-format-top" class="btn btn-secondary btn-start">📋 Copy Output Prompt</button>
     </section>
     <section class="section format-helper">
       <h2>Output format for interval timer</h2>
@@ -272,7 +293,6 @@ Jumping Jacks - 40
     // const copyBtn       = document.getElementById('copy-format');
     const formatExample = document.getElementById('format-example');
     // const startBtn      = document.getElementById('start-workout');
-    const startBtn      = document.getElementById('start-workout');
     const startBtnTop   = document.getElementById('start-workout-top');
     const copyBtnTop    = document.getElementById('copy-format-top');
     const helperSection = document.querySelector('.format-helper');
@@ -466,17 +486,6 @@ Jumping Jacks - 40
       tick();
     }
 
-    // START BUTTON
-    startBtn.onclick = () => {
-      buildQueue();
-      if (!fullQueue.length) {
-        alert('Add at least one interval');
-        return;
-      }
-      currentIndex = 0;
-      showRunner();
-      startInterval();
-    };
 
     // TOP COPY FORMAT BEHAVIOR
     copyBtnTop.onclick = () => {
@@ -495,7 +504,14 @@ Jumping Jacks - 40
 
     // TOP START WORKOUT
     startBtnTop.onclick = () => {
-      startBtn.onclick();
+      buildQueue();
+      if (!fullQueue.length) {
+        alert('Add at least one interval');
+        return;
+      }
+      currentIndex = 0;
+      showRunner();
+      startInterval();
     };
   });
   </script>
