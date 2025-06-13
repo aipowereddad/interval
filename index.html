@@ -29,9 +29,7 @@
       border-bottom: 1px solid #f0f0f0;
       background: #fbfdff;
     }
-    .section:last-child {
-      border-bottom: none;
-    }
+    .section:last-child { border-bottom: none; }
     /* HEADER / LOGO */
     .card-header {
       text-align: center;
@@ -46,57 +44,49 @@
       font-weight: 700;
       color: #004f8b;
     }
-    .logo-icon {
-      font-size: 2rem;
-      transform: translateY(-2px);
-    }
-    /* SECTION HEADINGS */
+    .logo-icon { font-size: 2rem; transform: translateY(-2px); }
+    /* HEADINGS */
     .section h2 {
       font-size: 1.25rem;
       margin-bottom: 16px;
       color: #333;
     }
-    /* GRID LAYOUT */
+    /* GRID */
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(160px,1fr));
       gap: 16px;
     }
-    .field {
-      display: flex; flex-direction: column;
-    }
+    .field { display: flex; flex-direction: column; }
     .field label {
       font-size: 0.875rem;
       margin-bottom: 6px;
       color: #555;
     }
-    .field input {
-      height: 48px;
-      padding: 0 14px;
-      font-size: 1rem;
+    .field input, textarea {
       border: 1px solid #d1e8ff;
       border-radius: 10px;
       transition: border-color .2s, box-shadow .2s;
     }
+    .field input {
+      height: 48px;
+      padding: 0 14px;
+      font-size: 1rem;
+    }
     .field input:focus {
       border-color: #0072ff;
       box-shadow: 0 0 0 4px rgba(0,114,255,0.15);
-      outline: none;
     }
     textarea {
       width: 100%;
       padding: 14px;
       font-size: 1rem;
-      border: 1px solid #d1e8ff;
-      border-radius: 10px;
       height: 100px;
       resize: vertical;
-      transition: border-color .2s, box-shadow .2s;
     }
     textarea:focus {
       border-color: #0072ff;
       box-shadow: 0 0 0 4px rgba(0,114,255,0.15);
-      outline: none;
     }
     /* INTERVAL ROW */
     #interval-list .interval-row {
@@ -116,7 +106,6 @@
     .interval-row input:focus {
       border-color: #0072ff;
       box-shadow: 0 0 0 3px rgba(0,114,255,0.15);
-      outline: none;
     }
     .delete-btn {
       background: none;
@@ -126,9 +115,7 @@
       cursor: pointer;
       transition: color .2s;
     }
-    .delete-btn:hover {
-      color: #e74c3c;
-    }
+    .delete-btn:hover { color: #e74c3c; }
     /* BUTTONS */
     .btn {
       display: inline-flex;
@@ -148,11 +135,10 @@
       background: #0072ff;
       color: #fff;
     }
-    .btn-primary:hover { 
-      background: #005fcc; 
+    .btn-primary:hover {
+      background: #005fcc;
       box-shadow: 0 6px 16px rgba(0,0,0,0.1);
     }
-    .btn-primary:active { transform: scale(0.97); }
     .btn-secondary {
       background: #00c96b;
       color: #fff;
@@ -161,8 +147,6 @@
       background: #00a856;
       box-shadow: 0 6px 16px rgba(0,0,0,0.1);
     }
-    .btn-secondary:active { transform: scale(0.97); }
-    /* FORMAT HELPER */
     .format-helper pre {
       background: #eef8ff;
       padding: 14px;
@@ -173,17 +157,15 @@
       overflow-x: auto;
       margin-bottom: 8px;
     }
-    /* RESPONSIVE */
     @media (max-width: 500px) {
       .section { padding: 20px; }
       .grid { gap: 12px; }
-      .btn { width: 100%; justify-content: center; }
+      .btn { width: 100%; }
     }
   </style>
 </head>
 <body>
   <div class="card">
-    <!-- Header / Branding -->
     <header class="card-header">
       <div class="logo">
         <span class="logo-icon">🏋️</span>
@@ -191,7 +173,7 @@
       </div>
     </header>
 
-    <!-- Workout Settings -->
+    <!-- SETTINGS -->
     <section class="section">
       <h2>Workout Settings</h2>
       <div class="grid">
@@ -210,14 +192,14 @@
       </div>
     </section>
 
-    <!-- Intervals -->
+    <!-- INTERVALS -->
     <section class="section">
       <h2>Intervals</h2>
       <div id="interval-list"></div>
       <button id="add-interval" class="btn btn-secondary">➕ Add Interval</button>
     </section>
 
-    <!-- Load Routine -->
+    <!-- LOAD ROUTINE -->
     <section class="section">
       <h2>Load Routine</h2>
       <p style="font-size:0.9rem; color:#555; margin-bottom:8px;">
@@ -229,10 +211,10 @@
       </button>
     </section>
 
-    <!-- Format Helper & Copy -->
+    <!-- FORMAT HELPER -->
     <section class="section format-helper">
-      <h2 style="font-size: 1rem; margin-bottom: 4px;">Output format for interval timer</h2>
-      <p style="font-size: 0.9rem; color: #555; margin-bottom: 8px;">
+      <h2 style="font-size:1rem; margin-bottom:4px;">Output format for interval timer</h2>
+      <p style="font-size:0.9rem; color:#555; margin-bottom:8px;">
         Each line should include the exercise name, followed by the duration in seconds.
       </p>
       <pre id="format-example">
@@ -243,208 +225,238 @@ Jumping Jacks - 40
       <button id="copy-format" class="btn btn-secondary">📋 Copy Format</button>
     </section>
 
-    <!-- Start Workout -->
+    <!-- START -->
     <section class="section" style="text-align:center;">
       <button id="start-workout" class="btn btn-primary">▶️ Start Workout</button>
     </section>
   </div>
 
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      // ELEMENTS
-      const roundsInput   = document.getElementById('rounds');
-      const restIntInput  = document.getElementById('rest-interval');
-      const restRndInput  = document.getElementById('rest-round');
-      const intervalList  = document.getElementById('interval-list');
-      const addBtn        = document.getElementById('add-interval');
-      const loadBtn       = document.getElementById('load-routine');
-      const pasteArea     = document.getElementById('paste-area');
-      const copyBtn       = document.getElementById('copy-format');
-      const formatExample = document.getElementById('format-example');
-      const startBtn      = document.getElementById('start-workout');
+  document.addEventListener('DOMContentLoaded', () => {
+    // ELEMENTS
+    const roundsInput   = document.getElementById('rounds');
+    const restIntInput  = document.getElementById('rest-interval');
+    const restRndInput  = document.getElementById('rest-round');
+    const intervalList  = document.getElementById('interval-list');
+    const addBtn        = document.getElementById('add-interval');
+    const loadBtn       = document.getElementById('load-routine');
+    const pasteArea     = document.getElementById('paste-area');
+    const copyBtn       = document.getElementById('copy-format');
+    const formatExample = document.getElementById('format-example');
+    const startBtn      = document.getElementById('start-workout');
 
-      // STATE
-      let fullQueue = [];
-      let currentIndex = 0;
-      let intervalEnd = 0;
-      let paused = false;
-      let pauseRemaining = 0;
-      let rafId = null;
+    // STATE
+    let fullQueue = [], currentIndex = 0, intervalEnd = 0;
+    let paused = false, pauseRemaining = 0, rafId = null;
+    let currentDuration = 0, overlayEl = null;
 
-      // AUDIO UTILS
-      function playBeep(freq, len) {
-        const ctx = new (window.AudioContext||window.webkitAudioContext)();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.connect(gain); gain.connect(ctx.destination);
-        osc.frequency.value = freq;
-        osc.start(); osc.stop(ctx.currentTime + len);
-      }
-      const playDing   = () => playBeep(1000, 0.1);
-      const playBuzzer = () => playBeep(200, 0.5);
+    // AUDIO UTILS
+    function playBeep(freq, len) {
+      const ctx = new (window.AudioContext||window.webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.frequency.value = freq;
+      osc.start(); osc.stop(ctx.currentTime + len);
+    }
+    const playDing   = () => playBeep(1000, 0.1);
+    const playBuzzer = () => playBeep(200,  0.5);
 
-      // INTERVAL ROW CREATION
-      function createInterval(name = '', dur = '') {
-        const row = document.createElement('div');
-        row.className = 'interval-row';
-        row.innerHTML = `
-          <input class="name" type="text" placeholder="Exercise Name" value="${name}"/>
-          <input class="duration" type="number" placeholder="Sec" min="0" value="${dur}"/>
-          <button class="delete-btn" title="Delete">&times;</button>
-        `;
-        row.querySelector('.delete-btn').onclick = () => row.remove();
-        intervalList.appendChild(row);
-      }
-      // start with one row
-      createInterval();
+    // CREATE INTERVAL ROW
+    function createInterval(name = '', dur = '') {
+      const row = document.createElement('div');
+      row.className = 'interval-row';
+      row.innerHTML = `
+        <input class="name" type="text" placeholder="Exercise Name" value="${name}"/>
+        <input class="duration" type="number" placeholder="Sec" min="0" value="${dur}"/>
+        <button class="delete-btn" title="Delete">&times;</button>
+      `;
+      row.querySelector('.delete-btn').onclick = () => row.remove();
+      intervalList.appendChild(row);
+    }
+    createInterval(); // one row by default
 
-      // HOOK ADD & LOAD
-      addBtn.onclick = () => createInterval();
-      loadBtn.onclick = () => {
-        const lines = pasteArea.value.trim().split('\n');
-        intervalList.innerHTML = '';
-        lines.forEach(l => {
-          const [n,d] = l.split('-').map(s => s.trim());
-          if (n && !isNaN(d)) createInterval(n, d);
-        });
-      };
+    // HOOK ADD/LOAD
+    addBtn.onclick = () => createInterval();
+    loadBtn.onclick = () => {
+      const lines = pasteArea.value.trim().split('\n');
+      intervalList.innerHTML = '';
+      lines.forEach(l => {
+        const [n,d] = l.split('-').map(s=>s.trim());
+        if (n && !isNaN(d)) createInterval(n,d);
+      });
+    };
 
-      // COPY FORMAT
-      copyBtn.onclick = () => {
-        const heading  = 'Output format for interval timer:';
-        const instr    = 'Each line should include the exercise name, followed by the duration in seconds.';
-        const examples = formatExample.innerText.trim();
-        const txt = `${heading}\n${instr}\n\n${examples}`;
-        navigator.clipboard.writeText(txt)
-          .then(() => alert('Copied!'))
-          .catch(() => alert('Copy failed'));
-      };
+    // COPY FORMAT HANDLER
+    copyBtn.onclick = () => {
+      const heading  = 'Output format for interval timer:';
+      const instr    = 'Each line should include the exercise name, followed by the duration in seconds.';
+      const examples = formatExample.innerText.trim();
+      const txt = `${heading}\n${instr}\n\n${examples}`;
+      navigator.clipboard.writeText(txt)
+        .then(()=> alert('Copied!'))
+        .catch(()=> alert('Copy failed'));
+    };
 
-      // BUILD FULL QUEUE
-      function buildQueue() {
-        const rounds  = parseInt(roundsInput.value)||1;
-        const restI   = parseInt(restIntInput.value)||0;
-        const restR   = parseInt(restRndInput.value)||0;
-        const base = [];
-        intervalList.querySelectorAll('.interval-row').forEach(r => {
-          const nm = r.querySelector('.name').value.trim();
-          const du = parseInt(r.querySelector('.duration').value);
-          if (nm && du>0) {
-            base.push({name: nm, duration: du});
-            if (restI>0) base.push({name: 'Rest', duration: restI});
-          }
-        });
-        if (base.length && base[base.length-1].name==='Rest') base.pop();
-        fullQueue = [];
-        for (let i=1; i<=rounds; i++) {
-          base.forEach(it=> fullQueue.push(it));
-          if (i<rounds && restR>0) fullQueue.push({name:'Break',duration:restR});
+    // BUILD FULL QUEUE
+    function buildQueue() {
+      const rounds = parseInt(roundsInput.value) || 1;
+      const restI  = parseInt(restIntInput.value)||0;
+      const restR  = parseInt(restRndInput.value)||0;
+      const base = [];
+      intervalList.querySelectorAll('.interval-row').forEach(r => {
+        const nm = r.querySelector('.name').value.trim();
+        const du = parseInt(r.querySelector('.duration').value);
+        if (nm && du>0) {
+          base.push({name:nm,duration:du});
+          if (restI>0) base.push({name:'Rest',duration:restI});
         }
+      });
+      if (base.length && base[base.length-1].name==='Rest') base.pop();
+      fullQueue = [];
+      for (let i=1; i<=rounds; i++) {
+        base.forEach(it => fullQueue.push(it));
+        if (i<rounds && restR>0) fullQueue.push({name:'Break',duration:restR});
       }
+    }
 
-      // SHOW RUNNER
-      function showRunner() {
-        const overlay = document.createElement('div');
-        overlay.id = 'runner';
-        Object.assign(overlay.style, {
-          position:'fixed',top:0,left:0,right:0,bottom:0,
-          background:'#fff',display:'flex',flexDirection:'column',
-          alignItems:'center',justifyContent:'center',zIndex:1000,
-          padding:'20px',textAlign:'center'
-        });
-        overlay.innerHTML = `
-          <div id="runner-round" style="font-size:2rem;font-weight:600;margin-bottom:8px"></div>
-          <div id="runner-next"  style="font-size:1.5rem;color:#666;margin-bottom:16px"></div>
-          <div id="runner-name"  style="font-size:3.5rem;font-weight:700"></div>
-          <div id="runner-timer" style="font-size:2.5rem;margin:16px 0"></div>
-          <div id="runner-progress" style="display:flex;gap:6px"></div>
-          <div style="margin-top:24px;display:flex;gap:12px">
-            <button id="pause-btn"  style="padding:12px 20px">Pause</button>
-            <button id="resume-btn" style="padding:12px 20px;display:none">Resume</button>
-            <button id="reset-btn"  style="padding:12px 20px">Reset</button>
-          </div>
-        `;
-        document.body.appendChild(overlay);
-        fullQueue.forEach(()=> {
-          const d = document.createElement('div');
-          Object.assign(d.style,{width:'10px',height:'10px',borderRadius:'50%',background:'#ddd'});
-          overlay.querySelector('#runner-progress').appendChild(d);
-        });
-        document.getElementById('pause-btn').onclick  = pauseTimer;
-        document.getElementById('resume-btn').onclick = resumeTimer;
-        document.getElementById('reset-btn').onclick  = ()=> location.reload();
-      }
+    // SHOW RUNNER
+    function showRunner() {
+      overlayEl = document.createElement('div');
+      overlayEl.id = 'runner';
+      Object.assign(overlayEl.style, {
+        position:'fixed',top:0,left:0,right:0,bottom:0,
+        display:'flex',flexDirection:'column',
+        alignItems:'center',justifyContent:'center',
+        zIndex:1000,textAlign:'center',
+        background:'#a8e6cf' // light green start
+      });
+      overlayEl.innerHTML = `
+        <div id="runner-round" style="font-size:2rem;font-weight:600;margin-bottom:8px"></div>
+        <div id="runner-next"  style="font-size:1.5rem;color:#666;margin-bottom:16px"></div>
+        <div id="runner-name"  style="font-size:3.5rem;font-weight:700"></div>
+        <div id="runner-timer" style="font-size:2.5rem;margin:16px 0"></div>
+        <div id="runner-progress" style="display:flex;gap:6px"></div>
+        <div style="margin-top:24px;display:flex;gap:12px">
+          <button id="pause-btn"  style="padding:12px 20px">Pause</button>
+          <button id="resume-btn" style="padding:12px 20px;display:none">Resume</button>
+          <button id="reset-btn"  style="padding:12px 20px">Reset</button>
+        </div>
+      `;
+      document.body.appendChild(overlayEl);
+      fullQueue.forEach(()=> {
+        const dot = document.createElement('div');
+        Object.assign(dot.style,{width:'10px',height:'10px',borderRadius:'50%',background:'#ddd'});
+        overlayEl.querySelector('#runner-progress').appendChild(dot);
+      });
+      document.getElementById('pause-btn').onclick  = pauseTimer;
+      document.getElementById('resume-btn').onclick = resumeTimer;
+      document.getElementById('reset-btn').onclick  = ()=> location.reload();
+    }
 
-      // INTERVALS
-      function startInterval() {
-        if (currentIndex>=fullQueue.length) {
-          alert('🎉 Workout complete!'); return;
-        }
-        const item = fullQueue[currentIndex];
-        intervalEnd = Date.now() + item.duration*1000;
-        const totalExercises = document.querySelectorAll('#interval-list .interval-row .name').length;
-        const doneExercises  = fullQueue.slice(0, currentIndex)
-          .filter(i=>i.name!=='Rest'&&i.name!=='Break').length;
-        const roundNum = Math.floor(doneExercises/totalExercises)+1;
-        document.getElementById('runner-round').textContent = 
-          `Round ${roundNum}/${roundsInput.value}`;
-        document.getElementById('runner-name').textContent = item.name;
-        const nxt = fullQueue[currentIndex+1];
-        document.getElementById('runner-next').textContent = nxt?`Next: ${nxt.name}`:'';
-        overlayProgress(currentIndex);
-        tick();
+    // START INTERVAL
+    function startInterval() {
+      if (currentIndex>=fullQueue.length) {
+        alert('🎉 Workout complete!'); return;
       }
+      const item = fullQueue[currentIndex];
+      currentDuration = item.duration;
+      intervalEnd = Date.now() + currentDuration*1000;
 
-      function overlayProgress(idx) {
-        const dots = document.getElementById('runner-progress').children;
-        dots[idx].style.background = '#0072ff';
-      }
+      // Round label
+      const exercisesPerRound = fullQueue.filter(i=>i.name!=='Rest'&&i.name!=='Break').length 
+        / parseInt(roundsInput.value);
+      const doneExercises = fullQueue.slice(0,currentIndex)
+        .filter(i=>i.name!=='Rest'&&i.name!=='Break').length;
+      const roundNum = Math.floor(doneExercises/exercisesPerRound)+1;
+      document.getElementById('runner-round').textContent =
+        `Round ${roundNum}/${roundsInput.value}`;
 
-      // TICK
-      let lastDisp = null;
-      function tick() {
-        if (paused) return;
-        const secLeft = Math.ceil((intervalEnd-Date.now())/1000);
-        const disp = secLeft>0?secLeft:0;
-        document.getElementById('runner-timer').textContent = disp;
-        if (disp<=3 && disp>0 && disp!==lastDisp) playDing();
-        if (disp===0 && lastDisp!==0) playBuzzer();
-        lastDisp = disp;
-        if (Date.now()<intervalEnd) {
-          rafId = requestAnimationFrame(tick);
-        } else {
-          currentIndex++;
-          lastDisp = null;
-          startInterval();
-        }
-      }
+      // Current name
+      document.getElementById('runner-name').textContent = item.name;
 
-      // PAUSE / RESUME
-      function pauseTimer() {
-        paused = true; cancelAnimationFrame(rafId);
-        pauseRemaining = Math.ceil((intervalEnd-Date.now())/1000);
-        document.getElementById('pause-btn').style.display='none';
-        document.getElementById('resume-btn').style.display='inline-block';
-      }
-      function resumeTimer() {
-        paused = false;
-        intervalEnd = Date.now()+pauseRemaining*1000;
-        document.getElementById('pause-btn').style.display='inline-block';
-        document.getElementById('resume-btn').style.display='none';
-        tick();
-      }
+      // Next up: skip Rest/Break
+      const nextEx = fullQueue.slice(currentIndex+1)
+        .find(i=>i.name!=='Rest'&&i.name!=='Break');
+      document.getElementById('runner-next').textContent =
+        nextEx ? `Next: ${nextEx.name}` : '';
 
-      // START BUTTON
-      startBtn.onclick = () => {
-        buildQueue();
-        if (!fullQueue.length) {
-          return alert('Add at least one interval');
-        }
-        currentIndex = 0;
-        showRunner();
+      // Highlight dot
+      overlayEl.querySelectorAll('#runner-progress div')
+        [currentIndex].style.background = '#0072ff';
+
+      tick();
+    }
+
+    // TICK & VISUAL FILL
+    let lastDisplayed = null;
+    function tick() {
+      if (paused) return;
+      const secLeft = Math.ceil((intervalEnd - Date.now())/1000);
+      const disp = secLeft>0 ? secLeft : 0;
+      document.getElementById('runner-timer').textContent = disp;
+
+      // audio
+      if (disp <=3 && disp>0 && disp!==lastDisplayed) playDing();
+      if (disp===0 && lastDisplayed!==0) playBuzzer();
+      lastDisplayed = disp;
+
+      // background fill logic
+      let fillPct, baseColor, fillColor;
+      if (secLeft > 5) {
+        // green phase
+        const elapsed = currentDuration - secLeft;
+        fillPct = (elapsed/currentDuration)*100;
+        baseColor = '#a8e6cf';   // light green
+        fillColor = '#379683';   // dark green
+      } else {
+        // red phase
+        const elapsed5 = 5 - secLeft;
+        fillPct = (elapsed5/5)*100;
+        baseColor = '#ffb3b3';   // light red
+        fillColor = '#d7263d';   // dark red
+      }
+      overlayEl.style.background =
+        `linear-gradient(to right, ${fillColor} ${fillPct}%, ${baseColor} ${fillPct}%)`;
+
+      // continue or next
+      if (Date.now() < intervalEnd) {
+        rafId = requestAnimationFrame(tick);
+      } else {
+        currentIndex++;
+        lastDisplayed = null;
         startInterval();
-      };
-    });
+      }
+    }
+
+    // PAUSE / RESUME
+    function pauseTimer() {
+      paused = true;
+      cancelAnimationFrame(rafId);
+      pauseRemaining = Math.ceil((intervalEnd - Date.now())/1000);
+      document.getElementById('pause-btn').style.display   = 'none';
+      document.getElementById('resume-btn').style.display = 'inline-block';
+    }
+    function resumeTimer() {
+      paused = false;
+      intervalEnd = Date.now() + pauseRemaining*1000;
+      document.getElementById('pause-btn').style.display   = 'inline-block';
+      document.getElementById('resume-btn').style.display = 'none';
+      tick();
+    }
+
+    // START BUTTON
+    startBtn.onclick = () => {
+      buildQueue();
+      if (!fullQueue.length) {
+        alert('Add at least one interval');
+        return;
+      }
+      currentIndex = 0;
+      showRunner();
+      startInterval();
+    };
+  });
   </script>
 </body>
 </html>
