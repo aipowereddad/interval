@@ -379,7 +379,7 @@ Jumping Jacks - 40
       const nextEx = fullQueue.slice(currentIndex+1)
         .find(i=>i.name!=='Rest'&&i.name!=='Break');
       document.getElementById('runner-next').textContent =
-        nextEx ? `Next: ${nextEx.name}` : '';
+        nextEx ? `Next Up: ${nextEx.name}` : '';
 
       // Highlight dot
       overlayEl.querySelectorAll('#runner-progress div')
@@ -397,7 +397,7 @@ Jumping Jacks - 40
       document.getElementById('runner-timer').textContent = disp;
 
       // audio
-      if (disp <=3 && disp>0 && disp!==lastDisplayed) playDing();
+      if (disp <=5 && disp>0 && disp!==lastDisplayed) playDing();
       if (disp===0 && lastDisplayed!==0) playBuzzer();
       lastDisplayed = disp;
 
@@ -406,13 +406,13 @@ Jumping Jacks - 40
       if (secLeft > 5) {
         // green phase
         const elapsed = currentDuration - secLeft;
-        fillPct = (elapsed/currentDuration)*100;
+        fillPct = (elapsed / currentDuration) * 100;
         baseColor = '#a8e6cf';   // light green
         fillColor = '#379683';   // dark green
       } else {
         // red phase
         const elapsed5 = 5 - secLeft;
-        fillPct = (elapsed5/5)*100;
+        fillPct = (elapsed5 / 5) * 100;
         baseColor = '#ffb3b3';   // light red
         fillColor = '#d7263d';   // dark red
       }
