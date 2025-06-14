@@ -232,10 +232,6 @@
       <button id="start-workout-top" class="btn btn-primary btn-start">🔥 Start Workout</button>
       <button id="copy-format-top" class="btn btn-secondary btn-start">📋 Copy Output Prompt</button>
     </section>
-    <div id="set-switcher" style="display:flex; align-items:center; gap:12px;">
-      <span id="current-set-label">Current Set: Set 1 of 1</span>
-      <button id="add-set" class="btn btn-secondary">➕ Add Set</button>
-    </div>
     <section class="section format-helper">
       <h2>Output Prompt Format</h2>
       <p style="font-size:0.9rem; color:#555; margin-bottom:8px;">
@@ -315,8 +311,8 @@ Jumping Jacks - 40
     const startBtnTop   = document.getElementById('start-workout-top');
     const copyBtnTop    = document.getElementById('copy-format-top');
     const helperSection = document.querySelector('.format-helper');
-    const setLabel      = document.getElementById('current-set-label');
-    const addSetBtn     = document.getElementById('add-set');
+    // const setLabel      = document.getElementById('current-set-label');
+    // const addSetBtn     = document.getElementById('add-set');
 
     // Make the interval list draggable
     Sortable.create(intervalList, {
@@ -325,13 +321,6 @@ Jumping Jacks - 40
     });
 
     // STATE
-    let sets = [{
-      rounds: 1,
-      intervalRest: 0,
-      roundRest: 0,
-      intervals: []
-    }];
-    let currentSetIndex = 0;
     let fullQueue = [], currentIndex = 0, intervalEnd = 0;
     let paused = false, pauseRemaining = 0, rafId = null;
     let currentDuration = 0, overlayEl = null;
@@ -361,45 +350,20 @@ Jumping Jacks - 40
       intervalList.appendChild(row);
     }
 
-    // SET MANAGEMENT
-    function updateSetLabel() {
-      setLabel.textContent = `Current Set: Set ${currentSetIndex + 1} of ${sets.length}`;
-    }
-    function saveCurrentSet() {
+    // SINGLE SET MANAGEMENT (no sets)
+    function getCurrentIntervals() {
       const intervals = [];
       intervalList.querySelectorAll('.interval-row').forEach(r => {
         const name = r.querySelector('.name').value.trim();
         const duration = parseInt(r.querySelector('.duration').value);
         if (name && duration > 0) intervals.push({ name, duration });
       });
-      sets[currentSetIndex] = {
-        rounds: parseInt(roundsInput.value) || 1,
-        intervalRest: parseInt(restIntInput.value) || 0,
-        roundRest: parseInt(restRndInput.value) || 0,
-        intervals
-      };
+      return intervals;
     }
-    function switchSet(index) {
-      saveCurrentSet();
-      currentSetIndex = index;
-      const set = sets[index];
-      roundsInput.value = set.rounds;
-      restIntInput.value = set.intervalRest;
-      restRndInput.value = set.roundRest;
-      intervalList.innerHTML = '';
-      set.intervals.forEach(i => createInterval(i.name, i.duration));
-      if (set.intervals.length === 0) createInterval();
-      updateSetLabel();
+    // Initial render
+    if (intervalList.querySelectorAll('.interval-row').length === 0) {
+      createInterval();
     }
-    function addSet() {
-      saveCurrentSet();
-      sets.push({ rounds: 1, intervalRest: 0, roundRest: 0, intervals: [] });
-      currentSetIndex = sets.length - 1;
-      switchSet(currentSetIndex);
-    }
-
-    // Initial render for first set
-    switchSet(0);
 
     // HOOK ADD/LOAD
     addBtn.onclick = () => createInterval();
@@ -411,26 +375,26 @@ Jumping Jacks - 40
         if (n && !isNaN(d)) createInterval(n,d);
       });
     };
-    addSetBtn.onclick = addSet;
 
-    // BUILD FULL QUEUE
+    // BUILD FULL QUEUE (single set only)
     function buildQueue() {
-      saveCurrentSet();
+      const rounds = parseInt(roundsInput.value) || 1;
+      const intervalRest = parseInt(restIntInput.value) || 0;
+      const roundRest = parseInt(restRndInput.value) || 0;
+      const intervals = getCurrentIntervals();
       fullQueue = [];
-      sets.forEach(set => {
-        const base = [];
-        set.intervals.forEach(i => {
-          base.push(i);
-          if (set.intervalRest > 0) base.push({ name: 'Rest', duration: set.intervalRest });
-        });
-        if (base.length && base[base.length - 1].name === 'Rest') base.pop();
-        for (let i = 1; i <= set.rounds; i++) {
-          fullQueue.push(...base);
-          if (i < set.rounds && set.roundRest > 0) {
-            fullQueue.push({ name: 'Break', duration: set.roundRest });
-          }
-        }
+      const base = [];
+      intervals.forEach(i => {
+        base.push(i);
+        if (intervalRest > 0) base.push({ name: 'Rest', duration: intervalRest });
       });
+      if (base.length && base[base.length - 1].name === 'Rest') base.pop();
+      for (let i = 1; i <= rounds; i++) {
+        fullQueue.push(...base);
+        if (i < rounds && roundRest > 0) {
+          fullQueue.push({ name: 'Break', duration: roundRest });
+        }
+      }
     }
 
     // SHOW RUNNER
@@ -581,7 +545,7 @@ Jumping Jacks - 40
         alert('Add at least one interval');
         return;
       }
-      alert(`Loaded ${sets.length} sets. Total exercises: ${fullQueue.length}`);
+      alert(`Loaded ${fullQueue.length} intervals.`);
       currentIndex = 0;
       showRunner();
       startInterval();
